@@ -1,0 +1,15 @@
+# Django
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Static & media
+staticfiles/
+media/
+
+# Virtual environment
+venv/
+
+# Node / Tailwind
+node_modules/
+tailwindcss.exe

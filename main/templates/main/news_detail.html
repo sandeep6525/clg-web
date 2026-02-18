@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} • News{% endblock %}
+
+{% block content %}
+<section class="max-w-5xl mx-auto py-12 px-6">
+  <h1 class="text-3xl md:text-4xl font-bold mb-6">{{ item.title }}</h1>
+
+  {% if item.image %}
+    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full rounded-lg shadow mb-6">
+  {% endif %}
+
+  <p class="text-gray-500 text-sm mb-4">
+    Published: {{ item.published_at|date:"F d, Y" }}
+  </p>
+
+  <div class="prose max-w-none text-gray-800">
+    {{ item.body|safe }}
+  </div>
+
+  <hr class="my-10">
+
+  <h2 class="text-2xl font-bold mb-4">More News</h2>
+  <div class="grid md:grid-cols-2 gap-6">
+    {% for n in recent %}
+      <div class="border rounded-lg p-4 hover:shadow">
+        <a href="{% url 'news_detail' slug=n.slug %}">
+          <h3 class="font-semibold text-lg">{{ n.title }}</h3>
+          <p class="text-sm text-gray-600">{{ n.summary|truncatewords:20 }}</p>
+        </a>
+      </div>
+    {% empty %}
+      <p>No more news.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

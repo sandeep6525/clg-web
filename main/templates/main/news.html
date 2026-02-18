@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% block title %}News • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end: #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    --light-gray: #f8fafc;
+    --dark-gray: #1e293b;
+    --royal-blue: #1e40af;
+    --emerald: #059669;
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  .hover-lift {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-strong);
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    position: relative;
+  }
+  .gradient-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+
+  .news-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+  }
+
+  .news-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .news-card:hover::before {
+    transform: translateX(0);
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero h1 {
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .input {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
+  }
+
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--dark-gray);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<header class="gradient-bg py-24 relative overflow-hidden hero">
+  <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Breadcrumb -->
+    <nav class="text-sm mb-6 opacity-90" aria-label="Breadcrumb">
+      <ol class="list-reset flex flex-wrap items-center gap-2">
+        <li><a href="{% url 'home' %}" class="hover:underline text-white">Home ></a></li>
+        
+        <li class="opacity-90 text-white">News</li>
+      </ol>
+    </nav>
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 floating-animation">
+      Department News & Notices
+    </h1>
+    <p class="text-lg text-white md:text-xl lg:text-2xl mb-8 max-w-4xl mx-auto opacity-95">
+      Stay updated with the latest announcements, achievements, and important notices.
+    </p>
+  </div>
+</header>
+
+<!-- Filters (GET) -->
+<section class="py-8 bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <form method="get" action="{% url 'news' %}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="md:col-span-2">
+        <input type="text" name="q" value="{{ request.GET.q }}" class="input w-full"
+               placeholder="Search title or content…">
+      </div>
+      <div>
+        <select name="category" class="input w-full">
+          <option value="">All Categories</option>
+          {% for c in categories %}
+            <option value="{{ c }}" {% if request.GET.category == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <input type="date" name="from" value="{{ request.GET.from }}" class="input w-full" title="From date">
+        <input type="date" name="to" value="{{ request.GET.to }}" class="input w-full" title="To date">
+      </div>
+      <div class="md:col-span-5 flex gap-3">
+        <button class="bg-royal-blue text-white px-5 py-2 rounded-lg bg-blue-800 hover-lift">Apply</button>
+        <a href="{% url 'news' %}" class="border border-royal-blue text-royal-blue px-5 py-2 rounded-lg hover:bg-royal-blue hover:text-black hover-lift">Reset</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Featured Story -->
+<section class="py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {% if featured_news %}
+      <article class="bg-white rounded-2xl overflow-hidden card-shadow hover-lift grid md:grid-cols-2">
+        <div class="h-64 md:h-auto">
+          {% if featured_news.image %}
+            <img src="{{ featured_news.image.url }}" alt="{{ featured_news.title }}" class="w-full h-full object-cover">
+          {% else %}
+            <img src="https://via.placeholder.com/1200x700?text=Featured" alt="{{ featured_news.title }}" class="w-full h-full object-cover">
+          {% endif %}
+        </div>
+        <div class="p-6 md:p-8">
+          <div class="flex items-center gap-2 text-sm mb-2">
+            {% if featured_news.category %}<span class="tag bg-amber/20 text-amber">{{ featured_news.category }}</span>{% endif %}
+            {% if featured_news.published_at %}<span class="text-gray-500">{{ featured_news.published_at|date:"M d, Y" }}</span>{% endif %}
+          </div>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-dark-gray mb-2">{{ featured_news.title }}</h2>
+          {% if featured_news.summary %}<p class="text-gray-700 mb-4">{{ featured_news.summary }}</p>{% endif %}
+          {% if featured_news.get_absolute_url %}
+            <a href="{{ featured_news.get_absolute_url }}" class="inline-block bg-royal-blue text-white px-5 py-2 rounded-lg bg-blue-800 hover-lift">Read Full Story</a>
+          {% endif %}
+        </div>
+      </article>
+    {% else %}
+      <p class="text-gray-500">No featured story selected.</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Content: Latest News + Sidebar -->
+<section class="pb-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-10">
+    <!-- Latest News Grid -->
+    <div class="lg:col-span-2">
+      <h3 class="text-2xl font-bold mb-5">Latest News</h3>
+
+      {% if news_list %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {% for n in news_list %}
+            <article class="bg-white rounded-2xl overflow-hidden shadow hover-lift news-card">
+              <div class="h-44 overflow-hidden">
+                {% if n.image %}
+                  <img src="{{ n.image.url }}" alt="{{ n.title }}" class="w-full h-full object-cover">
+                {% else %}
+                  <img src="https://via.placeholder.com/800x400?text=News" alt="{{ n.title }}" class="w-full h-full object-cover">
+                {% endif %}
+              </div>
+              <div class="p-5 space-y-2">
+                <div class="flex items-center gap-2 text-sm">
+                  {% if n.category %}<span class="tag bg-emerald/20 text-emerald">{{ n.category }}</span>{% endif %}
+                  {% if n.published_at %}<span class="text-gray-500">{{ n.published_at|date:"M d, Y" }}</span>{% endif %}
+                </div>
+                <h4 class="text-lg font-bold text-dark-gray">{{ n.title }}</h4>
+                {% if n.summary %}<p class="text-gray-600 line-clamp-3">{{ n.summary }}</p>{% endif %}
+                {% if n.get_absolute_url %}
+                  <a href="{{ n.get_absolute_url }}" class="text-royal-blue hover:underline">Read More →</a>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj %}
+          <div class="flex justify-center gap-2 mt-8">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}{{ querystring }}" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-white">Prev</a>
+            {% endif %}
+            <span class="px-4 py-2 rounded-lg bg-royal-blue text-white">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{{ querystring }}" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-white">Next</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <p class="text-gray-500">No news available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+      <!-- Notices -->
+      <div class="bg-white rounded-2xl p-6 shadow hover-lift">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-bold">Important Notices</h3>
+          <span class="tag bg-amber/20 text-amber">Notice</span>
+        </div>
+        {% if notices %}
+          <ul class="space-y-3 text-sm">
+            {% for item in notices %}
+              <li class="flex items-start gap-2">
+                <span class="mt-1 text-amber">•</span>
+                <div>
+                  <p class="font-semibold">{{ item.title }}</p>
+                  {% if item.date %}<p class="text-gray-500">{{ item.date|date:"M d, Y" }}</p>{% endif %}
+                  {% if item.get_absolute_url %}
+                    <a href="{{ item.get_absolute_url }}" class="text-royal-blue hover:underline">Details →</a>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-gray-500 text-sm">No notices right now.</p>
+        {% endif %}
+      </div>
+
+      <!-- Subscribe -->
+      <div class="bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-lg font-bold mb-2">Subscribe for updates</h3>
+        <p class="text-gray-600 text-sm mb-4">Get the latest news & alerts in your inbox.</p>
+        <form method="post" action="{% url 'news' %}">
+          {% csrf_token %}
+          <input type="email" name="subscribe_email" class="input w-full mb-3" placeholder="you@example.com" required>
+          <button class="bg-royal-blue text-white px-5 py-2 rounded-lg hover:bg-blue-800 w-full">Subscribe</button>
+        </form>
+        <p class="text-xs text-gray-500 mt-2">We respect your privacy. Unsubscribe anytime.</p>
+      </div>
+
+      <!-- Tags -->
+      <div class="bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-lg font-bold mb-3">Popular Tags</h3>
+        <div class="flex flex-wrap gap-2">
+          {% for t in popular_tags %}
+            <a href="{% url 'news' %}?tag={{ t }}" class="px-3 py-1 rounded-full border text-sm hover-lift">{{ t }}</a>
+          {% empty %}
+            <p class="text-gray-500 text-sm">No tags yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 gradient-bg text-center">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+    <h3 class="text-3xl md:text-4xl font-bold mb-4">Have a story or achievement to share?</h3>
+    <p class="text-white/90 mb-8">Faculty and students can submit news items to be featured on this page.</p>
+    <a href="{% url 'contact' %}" class="bg-amber text-dark-gray px-8 py-4 rounded-lg text-lg font-semibold hover:bg-yellow-400 hover-lift inline-block">Submit News</a>
+    <a href="{% url 'events' %}" class="ml-3 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-royal-blue inline-block">See Events</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Enhanced reveal animation with stagger effect
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (!prefersReduced) {
+    const revealElements = document.querySelectorAll('.reveal');
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, index * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    revealElements.forEach(el => revealObserver.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+</script>
+{% endblock %}

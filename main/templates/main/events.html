@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% block title %}Events • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end: #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    --light-gray: #f8fafc;
+    --dark-gray: #1e293b;
+    --royal-blue: #1e40af;
+    --emerald: #059669;
+    --btn-padding: 0.65rem 1rem;
+    --btn-radius: 0.75rem;
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  /* Hover animation */
+  .hover-lift {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-strong);
+  }
+
+  /* Gradient background */
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    position: relative;
+  }
+  .hero h1 {
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Event Card */
+  .event-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    padding: 1.25rem;
+  }
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+  .event-card:hover::before {
+    transform: translateX(0);
+  }
+  .event-card:hover {
+    transform: translateY(-10px) rotateX(0.5deg);
+    box-shadow: var(--shadow-strong);
+  }
+
+  /* Thumbnail wrapper */
+  .thumb-wrap {
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .thumb-wrap img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0.75rem;
+  }
+
+  /* Play button overlay */
+  .play-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .play-overlay:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  /* Event content */
+  .event-content {
+    margin-top: 1rem;
+  }
+  .event-date {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .event-title a {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--dark-gray);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .event-title a:hover {
+    color: var(--royal-blue);
+  }
+  .event-desc {
+    font-size: 0.95rem;
+    color: #475569;
+    margin-top: 0.25rem;
+  }
+
+  /* Video Modal */
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+  .video-modal[aria-hidden="false"] {
+    display: flex;
+  }
+  .video-modal-inner {
+    background: #000;
+    border-radius: 1rem;
+    max-width: 960px;
+    width: 95%;
+    overflow: hidden;
+    box-shadow: var(--shadow-strong);
+    animation: fadeIn 0.3s ease;
+  }
+  .video-player-wrapper iframe,
+  .video-player-wrapper video {
+    width: 100%;
+    height: 500px;
+    display: block;
+  }
+  .video-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 1.25rem;
+    cursor: pointer;
+    border-radius: 999px;
+    width: 2rem; height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  .video-close:hover {
+    background: rgba(255,255,255,0.35);
+  }
+
+  @keyframes fadeIn {
+    from {opacity:0; transform: scale(0.95);}
+    to {opacity:1; transform: scale(1);}
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .event-card { padding: 1rem; }
+    .thumb-wrap img { height: 180px; }
+    .video-player-wrapper iframe,
+    .video-player-wrapper video { height: 260px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+
+<header class="gradient-bg py-20 text-white relative hero ">
+  <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <nav class="text-sm mb-6 opacity-90" aria-label="Breadcrumb">
+      <ol class="flex gap-2">
+        <li><a href="{% url 'home' %}" class="hover:underline">Home &gt;</a></li>
+        <li class="opacity-90">Events</li>
+      </ol>
+    </nav>
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">Department Events</h1>
+    <p class="max-w-3xl text-lg opacity-90">
+      Explore upcoming and past events of our Computer Science Department.
+    </p>
+  </div>
+</header>
+
+<!-- Events Content -->
+
+<section class="py-14 bg-light-gray">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+
+
+<!-- Upcoming Events -->
+<div>
+  <h2 class="section-title" style="background: linear-gradient(135deg, #af8700, #af8700);
+                               -webkit-background-clip: text;
+                               -webkit-text-fill-color: transparent;
+                               background-clip: text;
+                               text-shadow: 2px 2px 4px rgba(0,0,0,0.1);"> Upcoming Events</h2>
+  {% if events_upcoming %}
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for e in events_upcoming %}
+    <div class="event-card">
+      {# Thumbnail + play overlay when video present #}
+      {% if e.video or e.video_url or e.get_embed_url %}
+        <div class="thumb-wrap">
+          {% if e.image %}
+            <img src="{{ e.image.url }}" alt="{{ e.title }}">
+          {% else %}
+            <div style="height:200px;background:#e6e9ef;display:flex;align-items:center;justify-content:center;">
+              <span class="sr-only">Video for {{ e.title }}</span>
+            </div>
+          {% endif %}
+
+          <button class="play-overlay" data-event-id="event-{{ forloop.counter }}" aria-label="Play video for {{ e.title }}">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"></circle>
+              <path d="M10 8v8l6-4-6-4z" fill="white"></path>
+            </svg>
+          </button>
+        </div>
+      {% else %}
+        {% if e.image %}
+          <img src="{{ e.image.url }}" alt="{{ e.title }}">
+        {% endif %}
+      {% endif %}
+
+      <div class="event-content">
+        <p class="event-date">{{ e.start_at|date:"M d, Y H:i" }} — {{ e.venue }}</p>
+        <h3 class="event-title">
+          <a href="{% url 'event_detail' e.slug %}">{{ e.title }}</a>
+        </h3>
+        <p class="event-desc">{{ e.short_description|truncatewords:20 }}</p>
+      </div>
+
+      {# Hidden modal/player container for this event #}
+      {% if e.video or e.video_url or e.get_embed_url %}
+      <div id="event-{{ forloop.counter }}" class="video-modal" aria-hidden="true">
+        <div class="video-modal-inner" role="dialog" aria-label="Video for {{ e.title }}">
+          <button class="video-close" aria-label="Close video">✕</button>
+
+          <div class="video-player-wrapper">
+            {% if e.video %}
+              <video controls preload="metadata" {% if e.image %} poster="{{ e.image.url }}" {% endif %}>
+                <source src="{{ e.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            {% elif e.get_embed_url %}
+              <iframe src="{{ e.get_embed_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% else %}
+              <iframe src="{{ e.video_url }}" frameborder="0" allowfullscreen></iframe>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-gray-500">No upcoming events available.</p>
+  {% endif %}
+</div>
+
+<!-- Past Events -->
+<div>
+  <h2 class="section-title" style="background: linear-gradient(135deg, #af8700, #af8700);
+                               -webkit-background-clip: text;
+                               -webkit-text-fill-color: transparent;
+                               background-clip: text;
+                               text-shadow: 2px 2px 4px rgba(0,0,0,0.1);"> Past Events</h2>
+  {% if events_past %}
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for e in events_past %}
+    <div class="event-card">
+      {% if e.video or e.video_url or e.get_embed_url %}
+        <div class="thumb-wrap">
+          {% if e.image %}
+            <img src="{{ e.image.url }}" alt="{{ e.title }}">
+          {% else %}
+            <div style="height:200px;background:#e6e9ef;display:flex;align-items:center;justify-content:center;">
+              <span class="sr-only">Video for {{ e.title }}</span>
+            </div>
+          {% endif %}
+
+          <button class="play-overlay" data-event-id="event-past-{{ forloop.counter }}" aria-label="Play video for {{ e.title }}">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"></circle>
+              <path d="M10 8v8l6-4-6-4z" fill="white"></path>
+            </svg>
+          </button>
+        </div>
+      {% else %}
+        {% if e.image %}
+          <img src="{{ e.image.url }}" alt="{{ e.title }}">
+        {% endif %}
+      {% endif %}
+
+      <div class="event-content">
+        <p class="event-date">{{ e.start_at|date:"M d, Y H:i" }} — {{ e.venue }}</p>
+        <h3 class="event-title">
+          <a href="{% url 'event_detail' e.slug %}">{{ e.title }}</a>
+        </h3>
+        <p class="event-desc">{{ e.short_description|truncatewords:20 }}</p>
+      </div>
+
+      {% if e.video or e.video_url or e.get_embed_url %}
+      <div id="event-past-{{ forloop.counter }}" class="video-modal" aria-hidden="true">
+        <div class="video-modal-inner" role="dialog" aria-label="Video for {{ e.title }}">
+          <button class="video-close" aria-label="Close video">✕</button>
+
+          <div class="video-player-wrapper">
+            {% if e.video %}
+              <video controls preload="metadata" {% if e.image %} poster="{{ e.image.url }}" {% endif %}>
+                <source src="{{ e.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            {% elif e.get_embed_url %}
+              <iframe src="{{ e.get_embed_url }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% else %}
+              <iframe src="{{ e.video_url }}" frameborder="0" allowfullscreen></iframe>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-gray-500">No past events found.</p>
+  {% endif %}
+</div>
+
+
+  </div>
+</section>
+
+{# JS for opening/closing modals; kept inline so template works stand-alone #}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  function stopMedia(modal) {
+    if (!modal) return;
+    var iframe = modal.querySelector('iframe');
+    if (iframe) {
+      // reset iframe src to stop playback
+      iframe.src = iframe.src.replace(/[&?]autoplay=1/, '');
+      iframe.removeAttribute('allow');
+    }
+    var video = modal.querySelector('video');
+    if (video) {
+      try { video.pause(); video.currentTime = 0; } catch(e){}
+    }
+  }
+
+  document.querySelectorAll('.play-overlay').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      var id = btn.getAttribute('data-event-id');
+      var modal = document.getElementById(id);
+      if (!modal) return;
+      // if iframe and supports autoplay, append autoplay=1
+      var iframe = modal.querySelector('iframe');
+      if (iframe) {
+        var src = iframe.getAttribute('src') || '';
+        if (src && !src.includes('autoplay=1')) {
+          var sep = src.indexOf('?') !== -1 ? '&' : '?';
+          iframe.setAttribute('src', src + sep + 'autoplay=1');
+        }
+      }
+      var video = modal.querySelector('video');
+      if (video) {
+        video.play().catch(function(){ /* autoplay blocked */ });
+      }
+      modal.setAttribute('aria-hidden','false');
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if (e.target.matches('.video-close')) {
+      var modal = e.target.closest('.video-modal');
+      if (!modal) return;
+      stopMedia(modal);
+      modal.setAttribute('aria-hidden','true');
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.video-modal[aria-hidden="false"]').forEach(function(modal){
+        stopMedia(modal);
+        modal.setAttribute('aria-hidden','true');
+      });
+    }
+  });
+});
+</script>
+
+{% endblock %}

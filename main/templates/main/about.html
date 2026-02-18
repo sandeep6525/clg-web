@@ -1,0 +1,752 @@
+{% extends "base.html" %}
+{% block title %}About • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end: #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    --light-gray: #f8fafc;
+    --dark-gray: #1e293b;
+    --royal-blue: #1e40af;
+    --emerald: #059669;
+  }
+
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-strong);
+  }
+
+  .hover-glow {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hover-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .hover-glow:hover::before {
+    left: 100%;
+  }
+
+  .focus-ring:focus {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+    outline: none;
+    border-radius: 0.5rem;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    position: relative;
+  }
+
+  .gradient-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  }
+
+  .feature-card {
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    backdrop-filter: blur(10px);
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .feature-card:hover::before {
+    transform: translateX(0);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: var(--shadow-strong);
+    background: #ffffff;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--dark-gray);
+    border: 2px solid var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+  }
+
+  .btn-ghost-white {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-ghost-white:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--emerald));
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 16px;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover .card-icon {
+    transform: rotate(10deg) scale(1.1);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+  }
+
+  .hero h1 {
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .meta {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--emerald);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-title {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    border-radius: 2px;
+  }
+
+  .quote-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quote-section::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-size: 200px;
+    color: rgba(212, 175, 55, 0.1);
+    font-family: serif;
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .pulse-glow {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    }
+
+    50% {
+      box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cards-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* Slider transitions */
+  .slider-item {
+    transition: opacity 1s ease-in-out, transform 1.5s ease-in-out;
+    opacity: 0;
+    z-index: 0;
+  }
+
+  .slider-item.active {
+    opacity: 1;
+    z-index: 1;
+    transform: scale(1);
+  }
+
+  .slider-dot {
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<main id="main" class="bg-white" role="main">
+
+  <!-- Hero Section -->
+  <header class="gradient-bg py-20 text-white relative overflow-hidden hero">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <nav class="breadcrumb mb-6" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-3 text-sm">
+          <li><a href="{% url 'home' %}" class="hover:text-yellow-300 transition-colors">Home</a></li>
+          <li class="opacity-60">›</li>
+          <li class="opacity-90 font-medium">About Department</li>
+        </ol>
+      </nav>
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 floating-animation">
+        About the Computer Science Department
+      </h1>
+      <p class="text-lg md:text-xl lg:text-2xl opacity-95 max-w-4xl leading-relaxed">
+        Excellence in computer science education and research — shaping future-ready graduates and pioneering innovative solutions since 2017.
+      </p>
+    </div>
+  </header>
+
+<section class="py-20 -mt-12 relative z-20 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
+            <!-- Header with gold accent -->
+            <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 h-2"></div>
+            
+            <!-- Content Grid -->
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 p-8 lg:p-12">
+                <!-- Text Content -->
+                <div class="space-y-6 reveal">
+                    <div class="relative">
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight"
+                            style="background: linear-gradient(135deg, #af8700, #af8700); 
+                                   -webkit-background-clip: text; 
+                                   -webkit-text-fill-color: transparent; 
+                                   background-clip: text;
+                                   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+                            Who We Are
+                        </h2>
+                        <div class="w-20 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mt-4 rounded-full"></div>
+                    </div>
+                    
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        The Computer Science Department at Sona College of Arts and Science stands as a center of excellence, combining strong theoretical foundations with practical applications to shape competent, innovative, and industry-ready professionals 
+                    </p>
+                    
+                    <!-- Optional: Add highlights with gold accents -->
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div class="text-2xl font-bold text-yellow-600">8+</div>
+                            <div class="text-sm text-gray-600">Years of Excellence</div>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div class="text-2xl font-bold text-yellow-600">5000+</div>
+                            <div class="text-sm text-gray-600">Graduates</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Content -->
+                <div class="relative">
+                    <div class="rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
+                        <div class="relative">
+                            <img src="../../static/img/IMG20220510155823[1].jpg"
+                                alt="Students collaborating on computer science projects"
+                                class="w-full h-80 md:h-96 lg:h-full object-cover transition-transform duration-700">
+                            
+                            <!-- Gold overlay gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-yellow-600/20 via-transparent to-transparent"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating gold accent element -->
+                    <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full opacity-80 blur-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <!-- Department Overview -->
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-3 gap-12 items-start">
+
+      <!-- Main Content -->
+
+
+      <!-- Statistics -->
+
+
+      <style>
+        @keyframes fade-in-up {
+          0% {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fade-in-up 1s ease forwards;
+        }
+      </style>
+
+    </div>
+  </div>
+  </section>
+
+  <!-- Mission & Values -->
+  <section class="py-20 bg-gradient-to-br from-slate-50 to-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="section-title text-center mb-50">Our Foundation</h2>
+      <div class="cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <article class="feature-card rounded-2xl p-8 shadow-lg hover-lift hover-glow reveal">
+          <div class="flex items-start mb-4">
+            <div class="card-icon">🎯</div>
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-gray-900">Our Vision</h3>
+              <p class="text-sm text-gray-600">To be a leading department in Computer Science education and research, committed to shaping future-ready graduates.
+              </p>
+            </div>
+          </div>
+          <p class="text-gray-800 font-medium leading-relaxed">
+           We strive to provide a world-class learning and research experience, fostering innovation and creativity that positively impacts society and contributes to the global technology landscape.
+          </p>
+        </article>
+
+        <article class="feature-card rounded-2xl p-8 shadow-lg hover-lift hover-glow reveal">
+          <div class="flex items-start mb-4">
+            <div class="card-icon">📊</div>
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-gray-900">Our Values</h3>
+              <p class="text-sm text-gray-600">We value innovation, collaboration, integrity, and excellence in everything we do.</p>
+            </div>
+          </div>
+          <p class="text-gray-800 font-medium leading-relaxed">
+            By nurturing a culture of continuous learning and ethical responsibility, we aim to develop competent and responsible technology professionals who drive progress and serve society with distinction.
+          </p>
+        </article>
+
+        <article class="feature-card rounded-2xl p-8 shadow-lg hover-lift hover-glow reveal">
+          <div class="flex items-start mb-4">
+            <div class="card-icon">👥</div>
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-gray-900">Our Community</h3>
+              <p class="text-sm text-gray-600">We are a vibrant, diverse, and inclusive community of students, faculty, and staff.
+              </p>
+            </div>
+          </div>
+          <p class="text-gray-800 font-medium leading-relaxed">
+            At Sona College of Arts and Science, the Computer Science Department builds an environment of belonging, support, and shared growth, where everyone is encouraged to contribute, collaborate, and succeed together.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Academic Excellence -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+        <div class="reveal space-y-8">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Academic Excellence & Research</h2>
+
+          <div class="feature-card p-6 rounded-xl hover-lift hover-glow bg-gradient-to-br from-blue-50 to-indigo-50">
+            <h4 class="text-xl font-bold mb-3 text-blue-700">Research Areas</h4>
+            <p class="text-gray-700">Cloud Computing, Internet of Things (IoT), Software Engineering, High-Performance Computing, Database Management Systems, and Programming Paradigms — supported by modern labs, advanced tools, and active faculty-student research collaborations.</p>
+          </div>
+
+          <div class="feature-card p-6 rounded-xl hover-lift hover-glow bg-gradient-to-br from-purple-50 to-pink-50">
+            <h4 class="text-xl font-bold mb-3 text-purple-700">Industry Partnerships</h4>
+            <p class="text-gray-700">Collaborative programs with leading IT and software companies offering internships, live projects, industrial training, and campus recruitment opportunities that prepare graduates for a competitive technology landscape.</p>
+          </div>
+
+          <div class="feature-card p-6 rounded-xl hover-lift hover-glow bg-gradient-to-br from-green-50 to-emerald-50">
+            <h4 class="text-xl font-bold mb-3 text-green-700">Global Recognition</h4>
+            <p class="text-gray-700">Well-structured and internationally respected Computer Science programs with alumni excelling in multinational corporations, software development firms, cloud service providers, and research institutions worldwide.</p>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="rounded-3xl overflow-hidden shadow-2xl hover-lift">
+            <img src="../../static/img/WhatsApp Image 2025-09-12 at 11.57.45_01e80a45.jpg"
+              alt="Modern computer science laboratory with advanced equipment"
+              class="w-full h-96 md:h-[500px] object-cover transition-transform duration-700">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty Highlights -->
+  <section class="py-20 bg-gradient-to-br from-gray-50 to-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="section-title text-center mb-12">Distinguished Faculty</h2>
+      <div class="reveal">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <div class="feature-card p-6 rounded-xl hover-lift text-center">
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl">
+              📚</div>
+            <h4 class="font-bold text-lg mb-2 text-gray-900">Dr. R. Shanthy</h4>
+            <p class="text-sm text-gray-600 mb-2">Assistant Professor</p>
+            <p class="text-gray-700 text-sm">M.C.A., Ph.D.,</p>
+          </div>
+
+          <div class="feature-card p-6 rounded-xl hover-lift text-center">
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl">
+              🌐</div>
+            <h4 class="font-bold text-lg mb-2 text-gray-900">Dr. S. Vanitha</h4>
+            <p class="text-sm text-gray-600 mb-2">Assistant Professor</p>
+            <p class="text-gray-700 text-sm">M.Sc.,M.Phil.,M.C.A.,(Ph. D)</p>
+          </div>
+
+          <div class="feature-card p-6 rounded-xl hover-lift text-center">
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl">
+              💻</div>
+            <h4 class="font-bold text-lg mb-2 text-gray-900">Mr.Ravishankar</h4>
+            <p class="text-sm text-gray-600 mb-2">Assistant  Professor</p>
+            <p class="text-gray-700 text-sm">M.Sc.,M.Phil.,M.C.A.,(Ph. D)</p>
+          </div>
+
+          <div class="feature-card p-6 rounded-xl hover-lift text-center">
+            <div
+              class="w-16 h-16 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl">
+              📊</div>
+            <h4 class="font-bold text-lg mb-2 text-gray-900">Dr. V. Diviya Prabha</h4>
+            <p class="text-sm text-gray-600 mb-2">Assistant  Professor</p>
+            <p class="text-gray-700 text-sm">M.C.A.,M.Phil.,Ph.D.,
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inspirational Quote -->
+  <section class="py-16 bg-gradient-to-r from-slate-800 to-slate-900 text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-10 left-10 text-9xl font-serif">"</div>
+      <div class="absolute bottom-10 right-10 text-9xl font-serif rotate-180">"</div>
+    </div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <blockquote class="text-2xl md:text-3xl lg:text-4xl font-serif italic mb-8 leading-relaxed floating-animation">"At Sona, we believe the true progress in computer science is driven not by technology alone, but by the curiosity, creativity, and dedication of our students and faculty who strive to make a difference."
+      </blockquote>
+      <cite class="text-lg opacity-80 font-medium">— Department of Computer Science</cite>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-20 gradient-bg text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/5"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-white relative z-10">
+      <h3 class="text-3xl md:text-5xl font-bold mb-6 floating-animation">Join Our Academic Community</h3>
+      <p class="text-lg md:text-xl opacity-95 mb-8 leading-relaxed max-w-3xl mx-auto">
+        Discover how our department can help shape your future in technology. Connect with our faculty, explore our
+        programs, and become part of our innovative community that's driving the future of computer science.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+        <a href="{% url 'contact' %}" class="btn-primary px-8 py-4 rounded-lg text-lg font-semibold hover-lift">
+          Contact Our Department
+        </a>
+        <a href="{% url 'news' %}" class="btn-ghost px-8 py-4 rounded-lg text-lg font-semibold hover-lift">
+          Latest News & Updates
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+{% endblock %}
+
+
+
+{% block extra_js %}
+<!-- keep your scripts unchanged -->
+<script>
+  // Enhanced reveal animation with stagger effect
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReduced) {
+    const revealElements = document.querySelectorAll('.reveal');
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, index * 100); // Stagger the animations
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    revealElements.forEach(el => revealObserver.observe(el));
+  } else {
+    // For users who prefer reduced motion, show elements immediately
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+
+  // Add scroll-triggered animations matching home page
+  const observeElements = () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationDelay = Math.random() * 0.5 + 's';
+          entry.target.classList.add('animate-fade-in-up');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .stats-card').forEach(el => observer.observe(el));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeElements);
+  } else {
+    observeElements();
+  }
+
+  // Add smooth scroll for internal links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // Add loading state for images
+  const images = document.querySelectorAll('img');
+  images.forEach(img => {
+    if (!img.complete) {
+      img.style.opacity = '0';
+      img.addEventListener('load', () => {
+        img.style.transition = 'opacity 0.5s ease';
+        img.style.opacity = '1';
+      });
+    }
+  });
+
+  // Enhanced accessibility: Focus management
+  const focusableElements = document.querySelectorAll(
+    'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+  );
+
+  // Add visual feedback for keyboard users
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      document.body.classList.add('keyboard-navigation');
+    }
+  });
+
+  document.addEventListener('mousedown', () => {
+    document.body.classList.remove('keyboard-navigation');
+  });
+
+  // Performance optimization: Intersection Observer for animations
+  if ('IntersectionObserver' in window) {
+    const animationObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    });
+
+    document.querySelectorAll('.floating-animation').forEach(el => {
+      el.style.animationPlayState = 'paused';
+      animationObserver.observe(el);
+    });
+  }
+
+</script>
+<style>
+  /* Additional accessibility and interaction styles */
+  .keyboard-navigation *:focus {
+    outline: 3px solid var(--accent) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Loading states */
+  img {
+    transition: opacity 0.3s ease;
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    .hover-lift:hover {
+      transform: none;
+    }
+
+    .feature-card:active {
+      transform: translateY(-4px) scale(0.98);
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .feature-card {
+      border: 2px solid;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+
+    .floating-animation,
+    .hover-lift {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    .gradient-bg {
+      background: white !important;
+      color: black !important;
+    }
+
+    .feature-card {
+      border: 1px solid #ccc !important;
+      break-inside: avoid;
+    }
+  }
+</style>
+
+{% endblock %}

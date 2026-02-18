@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Home • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end:  #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  /* Slider */
+  .slider-item {
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+  .slider-item.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+  }
+
+  /* Dots */
+  .slider-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+  }
+  .slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .slider-dot.active {
+    background: var(--accent);
+    transform: scale(1.2);
+    box-shadow: 0 0 6px rgba(212,175,55,0.8);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# SLIDER SECTION #}
+{% if sliders %}
+<section class="relative w-full overflow-hidden mb-8">
+  <div class="relative h-[280px] sm:h-[350px] md:h-[450px] lg:h-[550px]">
+    {% for s in sliders %}
+    <div class="slider-item {% if forloop.first %}active{% endif %}">
+      {% if s.image %}
+        <img src="{{ s.image.url }}" alt="{{ s.title }}" class="w-full h-full object-cover">
+      {% elif s.video %}
+        <video class="w-full h-full object-cover" preload="auto">
+          <source src="{{ s.video.url }}" type="video/mp4">
+        </video>
+      {% endif %}
+      {% if s.title or s.caption %}
+      <div class="absolute inset-0 hero-overlay flex flex-col items-center justify-center text-white text-center px-4 sm:px-8">
+        {% if s.title %}<h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 floating-animation">{{ s.title }}</h2>{% endif %}
+        {% if s.caption %}<p class="max-w-2xl text-base sm:text-lg md:text-xl opacity-95">{{ s.caption }}</p>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Dots -->
+  <div class="slider-dots">
+    {% for s in sliders %}
+      <span class="slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></span>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{# === REST OF YOUR EXISTING PAGE CONTENT === #}
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll(".slider-item");
+    const dots = document.querySelectorAll(".slider-dot");
+    let currentIndex = 0;
+    let timer;
+
+    const showSlide = (index) => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+        if (dots[i]) dots[i].classList.toggle("active", i === index);
+      });
+
+      const currentSlide = slides[index];
+      const video = currentSlide.querySelector("video");
+
+      clearTimeout(timer);
+
+      if (video) {
+        video.currentTime = 0;
+        video.play();
+        video.onended = () => nextSlide();
+      } else {
+        timer = setTimeout(() => nextSlide(), 10000); // 10s for images
+      }
+    };
+
+    const nextSlide = () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    };
+
+    dots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        currentIndex = parseInt(dot.dataset.index);
+        showSlide(currentIndex);
+      });
+    });
+
+    showSlide(currentIndex);
+  });
+</script>
+
+{% endblock %}

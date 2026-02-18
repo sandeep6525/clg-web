@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}{{ department_settings.site_name|default:"My College Department" }}{% endblock %}</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+
+  {% block extra_meta %}
+  <meta name="description" content="Official website of the {{ department_settings.site_name|default:'Computer Science Department' }}: news, events, exams, staff, and resources."/>
+  <meta property="og:title" content="{% block og_title %}{{ department_settings.site_name|default:'CS Department' }}{% endblock %}">
+  <meta property="og:description" content="Explore programs, faculty, events, exams, and department news.">
+  <meta property="og:type" content="website">
+  {% endblock %}
+
+  <!-- Tailwind Config -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'royal-blue': '#1E3A8A',
+          'emerald': '#059669',
+          'amber': '#F59E0B',
+          'light-gray': '#F9FAFB',
+          'dark-gray': '#111827',
+        }
+      }
+    }
+  }
+</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+<!-- ✅ FontAwesome for social icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .hover-lift{transition:all .3s cubic-bezier(.4,0,.2,1)}
+    .hover-lift:hover{transform:translateY(-6px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04)}
+    .gradient-bg{background:linear-gradient(135deg,#1E3A8A 0%,#059669 100%)}
+    .nav-link{position:relative;transition:color .3s ease}
+    .nav-link:after{content:'';position:absolute;width:0;height:2px;bottom:-4px;left:50%;background:#F59E0B;transition:all .3s ease}
+    .nav-link:hover:after{width:100%;left:0}
+    .nav-active{color:#1E3A8A;font-weight:700}
+
+    /* ✅ Unified form styles */
+    .form-input, .form-select, .form-textarea {
+      @apply w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400;
+    }
+    .form-textarea {
+      @apply min-h-[120px];
+    }
+    .btn-primary {
+      @apply inline-flex items-center gap-2 bg-amber-400 text-black px-5 py-3 rounded-lg font-semibold hover:bg-amber-500 transition;
+    }
+    .btn-ghost {
+      @apply inline-flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-3 rounded-lg hover:bg-gray-50 transition;
+    }
+    .badge {
+      @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-light-gray text-dark-gray">
+
+  <!-- Header / Navbar -->
+  <header class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-16 flex items-center justify-between">
+        <!-- ✅ Brand: Show only logo OR text -->
+        <a href="{% url 'home' %}" class="flex items-center gap-2">
+          {% if department_settings.logo %}
+            <img src="{{ department_settings.logo.url }}" alt="Logo" class="h-10 w-auto">
+          {% else %}
+            <span class="text-2xl font-bold text-royal-blue">
+              {{ department_settings.site_name|default:"CS Dept" }}
+            </span>
+          {% endif %}
+        </a>
+
+        <!-- Desktop Nav -->
+        {% with current=request.resolver_match.url_name %}
+        <nav class="hidden md:block">
+          <ul class="flex items-center gap-6">
+            <li><a href="{% url 'home' %}"    class="nav-link px-1 py-2 {% if current == 'home' %}nav-active{% endif %}">Home</a></li>
+            <li><a href="{% url 'about' %}"   class="nav-link px-1 py-2 {% if current == 'about' %}nav-active{% endif %}">About</a></li>
+            <li><a href="{% url 'staff' %}"   class="nav-link px-1 py-2 {% if current == 'staff' %}nav-active{% endif %}">Staff</a></li>
+            <li><a href="{% url 'events' %}"  class="nav-link px-1 py-2 {% if current == 'events' %}nav-active{% endif %}">Events</a></li>
+            <li><a href="{% url 'exams' %}"   class="nav-link px-1 py-2 {% if current == 'exams' %}nav-active{% endif %}">Exams</a></li>
+            <li><a href="{% url 'timetables' %}" class="nav-link px-1 py-2 {% if current == 'timetables' %}nav-active{% endif %}">Timetables</a></li>
+            <li><a href="{% url 'news' %}"    class="nav-link px-1 py-2 {% if current == 'news' %}nav-active{% endif %}">News</a></li>
+            <!-- <li><a href="{% url 'gallery' %}" class="nav-link px-1 py-2 {% if current == 'gallery' %}nav-active{% endif %}">Gallery</a></li> -->
+            <li><a href="{% url 'contact' %}" class="nav-link px-1 py-2 {% if current == 'contact' %}nav-active{% endif %}">Contact</a></li>
+          </ul>
+        </nav>
+        {% endwith %}
+
+        <!-- Admin Login Button -->
+        <div class="hidden md:block">
+          <a href="/admin" class="bg-royal-blue text-white px-5 py-2 rounded-lg hover:bg-blue-800 hover-lift">Admin Login</a>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button id="menuBtn" class="md:hidden p-2 rounded hover:bg-gray-100" aria-label="Open menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    {% with current=request.resolver_match.url_name %}
+    <nav id="mobileMenu" class="md:hidden hidden border-t bg-white">
+      <ul class="px-4 py-3 space-y-1">
+        <li><a href="{% url 'home' %}"    class="block px-3 py-2 rounded {% if current == 'home' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Home</a></li>
+        <li><a href="{% url 'about' %}"   class="block px-3 py-2 rounded {% if current == 'about' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">About</a></li>
+        <li><a href="{% url 'staff' %}"   class="block px-3 py-2 rounded {% if current == 'staff' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Staff</a></li>
+        <li><a href="{% url 'events' %}"  class="block px-3 py-2 rounded {% if current == 'events' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Events</a></li>
+        <li><a href="{% url 'exams' %}"   class="block px-3 py-2 rounded {% if current == 'exams' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Exams</a></li>
+        <li><a href="{% url 'timetables' %}" class="block px-3 py-2 rounded {% if current == 'timetables' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Timetables</a></li>
+        <li><a href="{% url 'news' %}"    class="block px-3 py-2 rounded {% if current == 'news' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">News</a></li>
+        <li><a href="{% url 'gallery' %}" class="block px-3 py-2 rounded {% if current == 'gallery' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Gallery</a></li>
+        <li><a href="{% url 'contact' %}" class="block px-3 py-2 rounded {% if current == 'contact' %}bg-royal-blue/10 text-royal-blue font-semibold{% endif %}">Contact</a></li>
+        <li class="pt-2"><a href="/admin" class="block px-3 py-2 rounded bg-royal-blue text-white hover:bg-blue-800">Admin Login</a></li>
+      </ul>
+    </nav>
+    {% endwith %}
+  </header>
+
+  <!-- Global Messages -->
+  {% if messages %}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    {% for m in messages %}
+      <div class="mb-3 rounded-lg px-4 py-3
+        {% if 'success' in m.tags %} bg-green-50 text-green-700
+        {% elif 'error' in m.tags %} bg-red-50 text-red-700
+        {% elif 'warning' in m.tags %} bg-amber-50 text-amber-800
+        {% else %} bg-blue-50 text-blue-800 {% endif %}">
+        {{ m }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block breadcrumb %}{% endblock %}
+
+  <main class="min-h-[60vh]">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Enhanced Footer -->
+<footer class="bg-gray-900 text-gray-300 mt-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-10">
+
+      <!-- About -->
+      <div>
+        <h3 class="text-2xl font-bold mb-4 text-amber-400">
+          {{ department_settings.site_name|default:"CS Department" }}
+        </h3>
+        <p class="text-gray-400 mb-4">
+          {{ department_settings.about_short|default:"Excellence in computer science education." }}
+        </p>
+        <a href="{% url 'about' %}" class="text-amber-400 hover:underline">Learn More →</a>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4 text-white">Navigation</h4>
+        <ul class="space-y-2">
+          <li><a href="{% url 'about' %}" class="hover:text-amber-400 transition">About</a></li>
+          <li><a href="{% url 'exams' %}" class="hover:text-amber-400 transition">Exams</a></li>
+          <li><a href="{% url 'events' %}" class="hover:text-amber-400 transition">Events</a></li>
+          <li><a href="{% url 'news' %}" class="hover:text-amber-400 transition">News</a></li>
+          <li><a href="{% url 'timetables' %}" class="hover:text-amber-400 transition">Timetables</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4 text-white">Resources</h4>
+        <ul class="space-y-2">
+          <li><a href="{% url 'gallery' %}" class="hover:text-amber-400 transition">Gallery</a></li>
+          <li><a href="{% url 'staff' %}" class="hover:text-amber-400 transition">Faculty</a></li>
+          <li><a href="{% url 'contact' %}" class="hover:text-amber-400 transition">Contact</a></li>
+          <li><a href="#" class="hover:text-amber-400 transition">Downloads</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4 text-white">Contact Info</h4>
+        <div class="space-y-2">
+          {% if department_settings.email %}
+            <p>📧 <a href="mailto:{{ department_settings.email }}" class="hover:text-amber-400">{{ department_settings.email }}</a></p>
+          {% endif %}
+          {% if department_settings.phone %}
+            <p>📞 <a href="tel:{{ department_settings.phone }}" class="hover:text-amber-400">{{ department_settings.phone }}</a></p>
+          {% endif %}
+          {% if department_settings.address %}
+            <p>📍 {{ department_settings.address }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4 text-white">Stay Updated</h4>
+        <form class="flex flex-col space-y-3">
+          <input type="email" placeholder="Enter your email" class="form-input bg-gray-800 text-white">
+          <button class="btn-primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Social & Copyright -->
+    <div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-gray-400">
+      <div class="flex space-x-4 mb-4 md:mb-0">
+        {% if department_settings.facebook %}
+          <a href="{{ department_settings.facebook }}" target="_blank" class="hover:text-amber-400"><i class="fab fa-facebook"></i></a>
+        {% endif %}
+        {% if department_settings.instagram %}
+          <a href="{{ department_settings.instagram }}" target="_blank" class="hover:text-amber-400"><i class="fab fa-instagram"></i></a>
+        {% endif %}
+        {% if department_settings.linkedin %}
+          <a href="{{ department_settings.linkedin }}" target="_blank" class="hover:text-amber-400"><i class="fab fa-linkedin"></i></a>
+        {% endif %}
+        {% if department_settings.x_twitter %}
+          <a href="{{ department_settings.x_twitter }}" target="_blank" class="hover:text-amber-400"><i class="fab fa-x-twitter"></i></a>
+        {% endif %}
+      </div>
+      <p>&copy; {% now "Y" %} {{ department_settings.site_name|default:"Computer Science Department" }}. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 bg-amber-400 text-black px-4 py-2 rounded-full shadow-lg hover:bg-amber-500 transition">
+    ↑ Top
+  </button>
+</footer>
+
+<!-- Mobile menu toggle script -->
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+</script>
+
+</body>
+</html>

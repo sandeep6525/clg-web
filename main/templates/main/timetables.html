@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Class Timetables • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end: #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    --light-gray: #f8fafc;
+    --dark-gray: #1e293b;
+    --royal-blue: #1e40af;
+    --emerald: #059669;
+  }
+
+  /* Page font & base */
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  /* Hero / Gradient background */
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    position: relative;
+  }
+
+  .hero h1 {
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Buttons & inputs */
+  .input {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
+  }
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+  }
+
+  .btn {
+    display: inline-block;
+    text-align: center;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    padding: 0.65rem 1rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--dark-gray);
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+  }
+
+  /* Card styles */
+  .exam-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .exam-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-strong);
+  }
+
+  .exam-card h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+    color: var(--dark-gray);
+  }
+  .exam-card p { color: #4b5563; margin: 0; }
+
+  /* Section title */
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--royal-blue);
+    background: linear-gradient(135deg, #af8700, #af8700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.08);
+  }
+
+  /* Floating animation used for subtle decoration */
+  .floating-animation { animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* Reveal helper for progressive animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 640px) {
+    .exam-card { padding: 1rem; }
+  }
+
+  /* Utility: visually-hidden (screen-reader only) */
+  .sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="gradient-bg py-20 text-center text-white hero">
+  <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10" aria-hidden="true"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <h1 class="text-4xl md:text-6xl font-bold">Class Timetables</h1>
+    <p class="mt-4 text-lg">Download semester timetables for your course.</p>
+  </div>
+</header>
+
+<section class="py-12" aria-labelledby="timetable-heading">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 id="timetable-heading" class="section-title">Timetables</h2>
+
+    <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" role="search" aria-label="Filter timetables">
+      <input
+        type="text"
+        name="q"
+        value="{{ request.GET.q }}"
+        class="input"
+        placeholder="Search by course…"
+        aria-label="Search by course"
+      >
+
+      <select name="semester" class="input" aria-label="Filter by semester">
+        <option value="">All Semesters</option>
+        {% for s in semesters %}
+          <option value="{{ s }}" {% if request.GET.semester == s|stringformat:"s" %}selected{% endif %}>Semester {{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <div class="grid grid-cols-2 gap-4">
+        <select name="year" class="input" aria-label="Filter by year">
+          <option value="">All Years</option>
+          {% for y in years %}
+            <option value="{{ y }}" {% if request.GET.year == y %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary">Apply</button>
+      </div>
+    </form>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for t in timetables %}
+      <article class="exam-card reveal" aria-labelledby="timetable-{{ forloop.counter }}">
+        <div>
+          <h3 id="timetable-{{ forloop.counter }}">{{ t.course }} — S{{ t.semester }}</h3>
+          <p class="text-sm" aria-hidden="true">Academic Year: {{ t.academic_year }}</p>
+          <p class="sr-only">Academic Year: {{ t.academic_year }}</p>
+        </div>
+
+        <div class="mt-4 flex items-center gap-3">
+          {% if t.pdf_file %}
+            <a
+              href="{{ t.pdf_file.url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary"
+              aria-label="Download timetable for {{ t.course }} semester {{ t.semester }}"
+            >
+              Download PDF
+            </a>
+            {% comment %} Optionally show file size if available: {{ t.pdf_file.size }} {% endcomment %}
+          {% else %}
+            <span class="text-gray-400">No file</span>
+          {% endif %}
+        </div>
+      </article>
+      {% empty %}
+        <p class="text-gray-500">No timetables available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Optional small script to reveal items on load (no external libs) -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Simple reveal: add .visible to reveal elements with a slight stagger
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach((el, idx) => {
+      setTimeout(() => el.classList.add('visible'), 80 * idx);
+    });
+  });
+</script>
+{% endblock %}

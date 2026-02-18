@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block title %}Contact • Computer Science Department{% endblock %}
+
+{% block extra_css %}
+<style>
+  :root {
+    --bg-gradient-start: #1a2332;
+    --bg-gradient-end: #1e40af;
+    --accent: #d4af37;
+    --accent-hover: #b8941f;
+    --muted: #64748b;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+    --light-gray: #f8fafc;
+    --dark-gray: #1e293b;
+    --royal-blue: #1e40af;
+    --emerald: #059669;
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  .hover-lift {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-strong);
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    position: relative;
+  }
+
+  .hero h1 {
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .feature-card:hover::before {
+    transform: translateX(0);
+  }
+
+  .input {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
+  }
+
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--dark-gray);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<header class="gradient-bg py-24 relative overflow-hidden hero">
+  <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center text-white">
+    <nav class="text-sm mb-6 opacity-90" aria-label="Breadcrumb">
+      <ol class="list-reset flex items-center justify-center gap-2">
+        <li><a href="{% url 'home' %}" class="hover:text-accent transition-colors">Home</a></li>
+        <li class="opacity-60">›</li>
+        <li class="opacity-90 font-medium">Contact Us</li>
+      </ol>
+    </nav>
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 floating-animation">
+      Get in Touch
+    </h1>
+    <p class="text-lg md:text-xl lg:text-2xl mb-8 max-w-4xl mx-auto opacity-95">
+      Connect with our CS community to ignite your potential as we grow together.
+    </p>
+  </div>
+</header>
+
+<!-- Contact Cards + Form -->
+<section class="py-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-10">
+    <!-- Left: Contact Cards -->
+    <aside class="space-y-5">
+      <div class="feature-card bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-xl font-bold mb-2">Department Office</h3>
+        <p class="text-gray-700">📧 sonacas.edu.in</p>
+        <p class="text-gray-700">📞 +91 81242 48719 </p>
+        <p class="text-gray-700">📍 Junction Main Road, Salem - 636002</p>
+        <p class="text-gray-700">🕒 Mon–Sat: 9:00 AM – 4:10 PM</p>
+        <div class="mt-3 flex flex-wrap gap-2 text-sm">
+          <a href="{% url 'about' %}" class="text-royal-blue hover:underline">About Dept →</a>
+          <a href="{% url 'staff' %}" class="text-royal-blue hover:underline">Faculty Directory →</a>
+        </div>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-xl font-bold mb-2">Exam & Academics</h3>
+        <p class="text-gray-700">📧 sonacas.edu.in</p>
+        <p class="text-gray-700">📞 +91 97894 65321</p>
+        <a href="{% url 'exams' %}" class="text-royal-blue hover:underline text-sm mt-2 inline-block">Exam Schedule →</a>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-xl font-bold mb-2">Events & Gallery</h3>
+        <p class="text-gray-700">📧 sonacas.edu.in</p>
+        <p class="text-gray-700">📞 +91 97894 65321</p>
+        <div class="mt-2 space-x-3 text-sm">
+          <a href="{% url 'events' %}" class="text-royal-blue hover:underline">Events →</a>
+          <a href="{% url 'gallery' %}" class="text-royal-blue hover:underline">Gallery →</a>
+        </div>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6 shadow hover-lift">
+        <h3 class="text-xl font-bold mb-3">Follow Us</h3>
+        <div class="flex items-center gap-3 text-gray-600">
+          <a href="#" class="hover:text-royal-blue">Instagram</a> ·
+          <a href="#" class="hover:text-royal-blue">Facebook</a> ·
+          <a href="#" class="hover:text-royal-blue">LinkedIn</a> ·
+          <a href="#" class="hover:text-royal-blue">X</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right: Contact Form -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-2xl p-8 shadow-lg hover-lift">
+        <h2 class="text-2xl font-bold mb-2">Send us a message</h2>
+        <p class="text-gray-600 mb-6">We usually respond within 2–3 working days.</p>
+
+        <!-- In your urls.py, point this page's POST to a contact view named 'contact' -->
+        <form method="post" action="{% url 'contact' %}" class="grid sm:grid-cols-2 gap-4">
+          {% csrf_token %}
+          <div>
+            <label class="label" for="name">Full Name</label>
+            <input class="input w-full mt-1" type="text" id="name" name="name" required placeholder="Your name" value="{{ form.name.value|default_if_none:'' }}">
+          </div>
+          <div>
+            <label class="label" for="email">Email</label>
+            <input class="input w-full mt-1" type="email" id="email" name="email" required placeholder="you@email.com" value="{{ form.email.value|default_if_none:'' }}">
+          </div>
+          <div>
+            <label class="label" for="phone">Phone</label>
+            <input class="input w-full mt-1" type="tel" id="phone" name="phone" placeholder=" Your Mobile Number" value="{{ form.phone.value|default_if_none:'' }}">
+          </div>
+          <div>
+            <label class="label" for="subject">Subject</label>
+            <input class="input w-full mt-1" type="text" id="subject" name="subject" required placeholder="Subject" value="{{ form.subject.value|default_if_none:'' }}">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="label" for="message">Message</label>
+            <textarea class="input w-full mt-1" id="message" name="message" rows="6" required placeholder="How can we help?">{{ form.message.value|default_if_none:'' }}</textarea>
+          </div>
+          <div class="sm:col-span-2 flex items-start gap-2">
+            <input id="agree" type="checkbox" name="agree" required class="mt-1">
+            <label for="agree" class="text-sm text-gray-600">I agree that this message may be stored for the purpose of responding. <a href="#" class="text-royal-blue hover:underline">Privacy Policy</a>.</label>
+          </div>
+
+          {% if messages %}
+            <div class="sm:col-span-2">
+              {% for m in messages %}
+                <div class="rounded-lg px-4 py-3 {% if m.tags == 'success' %}bg-green-50 text-green-700{% else %}bg-amber-50 text-amber-700{% endif %}">
+                  {{ m }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="sm:col-span-2">
+            <button type="submit" class="bg-royal-blue text-white px-6 py-3 rounded-lg font-semibold bg-blue-800 hover-lift">
+              Send Message
+            </button>
+            <p class="text-xs text-gray-500 mt-2">Note: This form posts to {% url 'contact' %}. Handle email/save in your view.</p>
+          </div>
+        </form>
+
+        <!-- Quick links under form -->
+        <div class="mt-6 flex flex-wrap gap-3 text-sm">
+          <a href="{% url 'news' %}" class="text-royal-blue hover:underline">Latest Notices →</a>
+          <a href="{% url 'events' %}" class="text-royal-blue hover:underline">Upcoming Events →</a>
+          <a href="{% url 'exams' %}" class="text-royal-blue hover:underline">Exam PDFs →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Map -->
+<section class="pb-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="rounded-2xl overflow-hidden shadow-lg hover-lift">
+      <iframe
+        title="Department Location"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.9724987267614!2d78.12422687505536!3d11.678281888530739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3babf0643620f1e7%3A0x6d68c6abc2bb5fdf!2sSona%20College%20of%20Arts%20and%20Science!5e1!3m2!1sen!2sin!4v1756749876043!5m2!1sen!2sin"
+        width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FAQs -->
+<section class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <details class="bg-light-gray rounded-lg p-5 hover-lift">
+        <summary class="font-semibold cursor-pointer">How do I reach the department office?</summary>
+        <p class="mt-2 text-gray-700">Use the contact card above or visit Building A, Room 301 during office hours.</p>
+      </details>
+      <details class="bg-light-gray rounded-lg p-5 hover-lift">
+        <summary class="font-semibold cursor-pointer">Where can I find exam schedules?</summary>
+        <p class="mt-2 text-gray-700">Check the <a href="{% url 'exams' %}" class="text-royal-blue underline">Exams page</a> for PDFs and dates.</p>
+      </details>
+      <details class="bg-light-gray rounded-lg p-5 hover-lift">
+        <summary class="font-semibold cursor-pointer">How to post an event or news?</summary>
+        <p class="mt-2 text-gray-700">Admins can add them via <b>Admin Login</b>. Students may email event details to the Events team.</p>
+      </details>
+      <details class="bg-light-gray rounded-lg p-5 hover-lift">
+        <summary class="font-semibold cursor-pointer">Who do I contact for Admissions?</summary>
+        <p class="mt-2 text-gray-700">Write to admissions@university.edu or call +1 (555) 555-0000.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 gradient-bg text-center">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+    <h3 class="text-3xl md:text-4xl font-bold mb-4">Need help with something else?</h3>
+    <p class="text-white/90 mb-8">Browse our latest updates or reach the right team.</p>
+    <a href="{% url 'news' %}" class="bg-amber text-dark-gray px-8 py-4 rounded-lg text-lg font-semibold hover:bg-yellow-400 hover-lift inline-block">Latest News</a>
+    <a href="{% url 'events' %}" class="ml-3 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-royal-blue inline-block">Upcoming Events</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Enhanced reveal animation with stagger effect
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (!prefersReduced) {
+    const revealElements = document.querySelectorAll('.reveal');
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, index * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    revealElements.forEach(el => revealObserver.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  }
+</script>
+{% endblock %}
